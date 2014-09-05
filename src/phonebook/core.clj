@@ -1,4 +1,5 @@
 (ns phonebook.core
+  (:require clojure.pprint)
   (:gen-class))
 
 (defn exists?
@@ -46,24 +47,29 @@
           "Entry doesn't exist")    
     "Phonebook does not exist"))
 
-(defn lookup
-  "Lookup an entry on a phonebook"
-  [[name phonebook-name]]
+(defn lookup 
+  "Lookup an entry by name on a phonebook"
+  [[search-str phonebook-name]]
   (if (exists? phonebook-name)
     (let [phonebook (read-string (slurp phonebook-name))
           names (keys phonebook)]
-       
-      )
+      (filter identity 
+          (map (fn [name]
+             (let [pattern (re-pattern  (str "(?i)" search-str))]
+              (if (re-find pattern name) [name (phonebook name)] nil)))
+           names)))
     "Phonebook does not exist"))
 
 (defn reverse-lookup
-  "Lookup an entry on a phonebook"
-  [[name phonebook-name]]
+  "Lookup an entry by number on a phonebook"
+  [[search-number phonebook-name]]
   (if (exists? phonebook-name)
     (let [phonebook (read-string (slurp phonebook-name))
           names (keys phonebook)]
-       
-      )
+       (filter identity 
+          (map (fn [name]
+            (if (= (phonebook name) search-number) [name (phonebook name)] nil))
+           names)))
     "Phonebook does not exist"))
 
 (defn help
@@ -81,7 +87,8 @@
   "Main function"
   [& args]
   (let [command (first args)]
-    (println (condp = command
+    (clojure.pprint/pprint
+      (condp = command
       "help" (help)
       "create" (create-phonebook (rest args))
       "add" (add-entry (rest args))
