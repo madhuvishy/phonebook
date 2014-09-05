@@ -15,7 +15,7 @@
   (if (exists? phonebook-name)
     "Phonebook with same name already exists!"
     (do
-      (spit (str "./" phonebook-name) "")
+      (spit (str "./" phonebook-name) (pr-str {}))
       (str "Created phonebook " phonebook-name " in the current directory."))))
 
 (defn add-entry
@@ -23,8 +23,11 @@
   [[name number phonebook-name]]
   (if (exists? phonebook-name)
     (let [phonebook (read-string (slurp phonebook-name))]
-        (if (phonebook name) "Entry already exists"
-          (spit phonebook-name (pr-str (assoc phonebook name number)))))
+        (if (phonebook name) 
+          "Entry already exists"
+          (do 
+            (spit phonebook-name (pr-str (assoc phonebook name number)))
+            "Entry added")))
     "Phonebook does not exist"))
 
 (defn change-entry
@@ -33,7 +36,9 @@
   (if (exists? phonebook-name)
     (let [phonebook (read-string (slurp phonebook-name))]
         (if (phonebook name)
-          (spit phonebook-name (pr-str (assoc phonebook name number))))
+          (do
+            (spit phonebook-name (pr-str (assoc phonebook name number)))
+            "Entry changed"))
           "Entry doesn't exist")    
     "Phonebook does not exist"))
 
@@ -43,7 +48,9 @@
   (if (exists? phonebook-name)
     (let [phonebook (read-string (slurp phonebook-name))]
         (if (phonebook name)
-          (spit phonebook-name (pr-str (dissoc phonebook name))))
+          (do
+            (spit phonebook-name (pr-str (dissoc phonebook name)))
+            "Entry removed"))
           "Entry doesn't exist")    
     "Phonebook does not exist"))
 
