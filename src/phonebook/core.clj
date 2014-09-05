@@ -1,5 +1,4 @@
 (ns phonebook.core
-  (:require clojure.pprint)
   (:gen-class))
 
 (defn exists?
@@ -94,7 +93,7 @@
   "Main function"
   [& args]
   (let [command (first args)]
-    (clojure.pprint/pprint
+    (println
       (condp = command
       "help" (help)
       "create" (create-phonebook (rest args))
